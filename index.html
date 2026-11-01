@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#171126">
+<title>SUENSY · Conecta a tu manera</title>
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+:root{--bg:#100d18;--panel:#1c1728;--panel2:#251e34;--ink:#f8f5ff;--muted:#b9afc9;--pink:#ff5fa2;--violet:#9b7bff;--line:#3b304e;--good:#73d9ae}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 85% 0,#392052 0,transparent 32%),var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+header{position:sticky;top:0;z-index:5;background:#151020ed;backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:12px max(18px,calc((100% - 1050px)/2));display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font-weight:900;letter-spacing:3px;font-size:22px}.brand span{color:var(--pink)}.tag{font-size:11px;color:#ffd3e5;border:1px solid #8c4266;padding:3px 8px;border-radius:20px;margin-left:8px}
+nav{display:flex;gap:7px;overflow:auto;padding:10px max(12px,calc((100% - 1050px)/2));border-bottom:1px solid var(--line);background:#171222}
+nav button{white-space:nowrap;background:transparent;border:1px solid transparent;color:var(--muted);padding:9px 12px;border-radius:12px;cursor:pointer;font-weight:650}
+nav button.active,nav button:hover{background:var(--panel2);color:white;border-color:var(--line)}
+main{max-width:1050px;margin:auto;padding:28px 18px 70px}.hero{padding:34px 28px;border:1px solid #514066;border-radius:24px;background:linear-gradient(125deg,#302044,#21192f 55%,#3a2041);margin-bottom:22px}
+h1{font-size:clamp(30px,6vw,48px);line-height:1.08;margin:8px 0 12px}.sub{color:var(--muted);max-width:650px}.eyebrow{color:#ffacd0;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;font-size:12px}
+h2{margin:0 0 8px;font-size:25px}h3{margin:0 0 5px}.muted{color:var(--muted)}.small{font-size:13px;color:var(--muted)}
+.card{background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:18px;padding:18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.profile{overflow:hidden;padding:0}.avatar{height:125px;display:grid;place-items:center;font-size:58px;background:linear-gradient(135deg,#48305c,#24213d)}.profile-body{padding:16px}.chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}.chip{font-size:12px;border-radius:20px;padding:4px 9px;background:#382b4b;color:#e5d9ff}
+button,.btn{font:inherit}.primary,.secondary,.danger{border:0;border-radius:12px;padding:11px 15px;font-weight:750;cursor:pointer}.primary{background:linear-gradient(100deg,var(--pink),var(--violet));color:white}.secondary{background:#342944;color:white;border:1px solid #59476e}.danger{background:#512738;color:#ffdce8}.primary:hover,.secondary:hover{filter:brightness(1.12)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.field{display:grid;gap:6px;margin:12px 0}.field label{font-size:13px;color:#d9cfe7;font-weight:700}input,textarea,select{width:100%;padding:12px;border:1px solid #554765;border-radius:11px;background:#130f1c;color:white;font:inherit}input:focus,textarea:focus,select:focus{outline:2px solid #a77dff;border-color:transparent}textarea{min-height:90px;resize:vertical}
+.formgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}.notice{padding:12px 14px;border-radius:12px;background:#2b2238;border:1px solid #55436b;color:#d8cce8;font-size:13px;margin:14px 0}.notice.good{border-color:#39795e;background:#1d352e;color:#c5f5df}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.hidden{display:none!important}.category{min-height:130px;display:flex;flex-direction:column;justify-content:space-between}.category .emoji{font-size:30px}.chatline{padding:12px 0;border-bottom:1px solid var(--line)}footer{border-top:1px solid var(--line);padding:18px;text-align:center;color:var(--muted);font-size:12px}
+@media(max-width:600px){header{padding:11px 14px}.tag{display:none}main{padding:18px 13px 50px}.hero{padding:25px 19px}nav{padding:8px 10px}}
+</style>
+</head>
+<body>
+<header><div><span class="brand">SUEN<span>SY</span></span><span class="tag">WEB · +18</span></div><div id="accountTop" class="small">Modo demostración</div></header>
+<nav id="nav">
+<button data-page="home" class="active">⌂ Inicio</button><button data-page="discover">♡ Descubrir</button><button data-page="messages">✉ Mensajes</button><button data-page="categories">✦ Categorías</button><button data-page="profile">◉ Mi perfil</button><button data-page="premium">★ Premium</button><button data-page="account">⚙ Cuenta</button>
+</nav>
+<main>
+<section id="home" class="page">
+<div class="hero"><div class="eyebrow">Conecta a tu manera</div><h1>Conecta con gente cerca de ti.</h1><p class="sub">Nuevas amistades, planes y conexiones. A tu manera.</p><div class="actions"><button class="primary" data-go="discover">Descubrir personas</button><button class="secondary" data-go="account">Crear mi cuenta</button></div></div>
+<div class="grid"><div class="card"><h3>🤝 Amistad</h3><p class="muted">Conoce gente nueva sin presión.</p></div><div class="card"><h3>💜 Citas</h3><p class="muted">Conexiones con intereses comunes.</p></div><div class="card"><h3>🎉 Planes</h3><p class="muted">Encuentra actividades y aficiones.</p></div></div>
+<div class="notice">Esta versión es una demostración local: los datos se guardan solo en este navegador. No hay usuarios reales ni servidor compartido.</div>
+</section>
+<section id="discover" class="page hidden">
+<div class="row"><div><div class="eyebrow">Personas</div><h2>Descubrir</h2><p class="muted">Encuentra personas por ciudad e intereses.</p></div></div>
+<div class="card" style="margin:16px 0"><div class="formgrid"><div class="field"><label for="cityFilter">Ciudad</label><input id="cityFilter" placeholder="Ej. Sevilla"></div><div class="field"><label for="interestFilter">Interés</label><select id="interestFilter"><option value="">Todos los intereses</option><option>Amistad</option><option>Conocer gente</option><option>Deporte</option><option>Música</option><option>Viajes</option><option>Salir y ocio</option></select></div></div><button id="searchBtn" class="primary">Buscar</button></div>
+<div id="profiles" class="grid"></div>
+</section>
+<section id="messages" class="page hidden"><div class="eyebrow">Conversaciones</div><h2>Mensajes</h2><p class="muted">Tus saludos y conexiones de esta demostración.</p><div class="card" id="messageList"></div><div class="notice">El chat entre personas distintas necesita un backend seguro. Aquí puedes probar la interfaz en este dispositivo.</div></section>
+<section id="categories" class="page hidden"><div class="eyebrow">Encuentra tu plan</div><h2>Explora por categorías</h2><p class="muted">Elige qué te apetece encontrar.</p><div class="grid" id="categoryGrid"></div></section>
+<section id="profile" class="page hidden"><div class="eyebrow">Tu espacio</div><h2>Mi perfil</h2><p class="muted">Completa la información que quieres compartir.</p><div class="card"><div class="formgrid"><div class="field"><label for="pname">Nombre visible</label><input id="pname" maxlength="30" placeholder="Cómo quieres que te llamen"></div><div class="field"><label for="page">Edad (18 o más)</label><input id="page" type="number" min="18" max="99" placeholder="18"></div><div class="field"><label for="pcity">Ciudad</label><input id="pcity" maxlength="50" placeholder="Tu ciudad"></div><div class="field"><label for="pinterest">Intereses</label><input id="pinterest" maxlength="100" placeholder="Música, deporte, viajes..."></div></div><div class="field"><label for="pbio">Descripción</label><textarea id="pbio" maxlength="350" placeholder="Cuéntales algo sobre ti..."></textarea></div><button id="saveProfile" class="primary">Guardar perfil en este dispositivo</button><p id="profileStatus" class="small"></p></div><div class="notice">No subas información sensible. Esta demo no tiene almacenamiento seguro en la nube ni permite que otras personas vean tu perfil.</div></section>
+<section id="premium" class="page hidden"><div class="hero"><div class="eyebrow">Más opciones</div><h1>SUENSY Premium</h1><h2>1 € / mes</h2><p class="sub">Precio propuesto para funciones adicionales. Esta demo no procesa pagos.</p></div><div class="card"><h3>Funciones prémium previstas</h3><ul class="muted"><li>Filtros avanzados</li><li>Ver quién te ha dado like</li><li>Destacar perfil</li><li>Más opciones de personalización</li></ul><div class="notice">El cobro real se añadirá después de configurar proveedor de pagos, condiciones legales y cuenta de comercio.</div></div></section>
+<section id="account" class="page hidden"><div class="eyebrow">Acceso</div><h2>Tu cuenta SUENSY</h2><p class="muted">Prueba el flujo de registro local. No crea una cuenta online.</p><div class="card"><div class="field"><label for="email">Correo electrónico</label><input id="email" type="email" autocomplete="email" placeholder="tu@correo.com"></div><div class="field"><label for="password">Contraseña de prueba</label><input id="password" type="password" autocomplete="new-password" minlength="8" placeholder="Mínimo 8 caracteres"></div><div class="field"><label style="display:flex;gap:9px;align-items:flex-start"><input id="adult" type="checkbox" style="width:auto;margin-top:4px"> Confirmo que tengo 18 años o más y acepto las normas de la comunidad.</label></div><div class="actions"><button id="register" class="primary">Crear cuenta de prueba</button><button id="logout" class="secondary">Cerrar sesión local</button></div><p id="accountStatus" class="small"></p></div><div class="notice">Para producción: verificación de edad adecuada, autenticación segura, recuperación de cuenta, protección de datos y moderación. La casilla por sí sola no verifica la edad.</div></section>
+</main>
+<footer>SUENSY · Prototipo web para mayores de 18 años · Sin usuarios reales, geolocalización, chat entre usuarios ni pagos activos.</footer>
+<script>
+const $=id=>document.getElementById(id);
+const demo=[
+ {name:"Lucía",age:25,city:"Sevilla",bio:"Música, cafés y descubrir sitios nuevos.",tags:["Amistad","Música"],emoji:"🌻"},
+ {name:"Álex",age:28,city:"Sevilla",bio:"Deporte, naturaleza y escapadas.",tags:["Deporte","Viajes"],emoji:"🏄"},
+ {name:"Mar",age:24,city:"Sevilla",bio:"Conciertos, cine y buenos planes.",tags:["Conocer gente","Música","Salir y ocio"],emoji:"🎧"},
+ {name:"Diego",age:27,city:"Sevilla",bio:"Viajes y fotografía.",tags:["Amistad","Viajes"],emoji:"🌍"}
+];
+const cats=[["🤝","Amistad","Conocer gente nueva sin presión."],["💜","Ligar","Conexiones y citas."],["🎉","Salir y ocio","Planes, bares y eventos."],["⚽","Deporte","Entrenar y compartir aficiones."],["🎵","Música","Conciertos y gustos musicales."],["✈️","Viajes","Escapadas y aventuras."]];
+let likes=JSON.parse(localStorage.getItem("suensy_likes")||"[]"), greetings=JSON.parse(localStorage.getItem("suensy_greetings")||"[]");
+function page(name){document.querySelectorAll(".page").forEach(x=>x.classList.add("hidden"));$(name).classList.remove("hidden");document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===name));if(name==="discover")renderProfiles();if(name==="messages")renderMessages();if(name==="profile")loadProfile();window.scrollTo(0,0)}
+document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>page(b.dataset.page));
+document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>page(b.dataset.go));
+function renderProfiles(){let city=$("cityFilter").value.trim().toLowerCase(),interest=$("interestFilter").value;let list=demo.filter(p=>(!city||p.city.toLowerCase().includes(city))&&(!interest||p.tags.includes(interest)));$("profiles").innerHTML=list.length?list.map((p,i)=>`<article class="card profile"><div class="avatar">${p.emoji}</div><div class="profile-body"><h3>${p.name}, ${p.age}</h3><div class="small">${p.city} · ${p.bio}</div><div class="chips">${p.tags.map(t=>`<span class="chip">${t}</span>`).join("")}</div><div class="actions"><button class="primary" onclick="toggleLike('${p.name}')">${likes.includes(p.name)?"♥ Te gusta":"♡ Me gusta"}</button><button class="secondary" onclick="greet('${p.name}')">Saludar</button></div></div></article>`).join(""):'<div class="card">No hay perfiles de ejemplo con esos filtros.</div>'}
+function toggleLike(n){likes=likes.includes(n)?likes.filter(x=>x!==n):[...likes,n];localStorage.setItem("suensy_likes",JSON.stringify(likes));renderProfiles()}
+function greet(n){if(!greetings.includes(n))greetings.push(n);localStorage.setItem("suensy_greetings",JSON.stringify(greetings));alert("Saludo de demostración preparado para "+n+". No se ha enviado a una persona real.");}
+$("searchBtn").onclick=renderProfiles;
+function renderMessages(){$("messageList").innerHTML=greetings.length?greetings.map(n=>`<div class="chatline"><b>${n}</b><div class="muted">Has preparado un saludo de demostración.</div><span class="small">Sin conversación real</span></div>`).join(""):'<p class="muted">Todavía no has saludado a ningún perfil de ejemplo. Ve a Descubrir para probarlo.</p>'}
+$("categoryGrid").innerHTML=cats.map(c=>`<button class="card category secondary" onclick="categorySearch('${c[1]}')"><span class="emoji">${c[0]}</span><b>${c[1]}</b><span class="small">${c[2]}</span></button>`).join("");
+function categorySearch(c){page("discover");$("interestFilter").value= c==="Ligar"?"Conocer gente":c;renderProfiles()}
+function loadProfile(){let p=JSON.parse(localStorage.getItem("suensy_profile")||"{}");["pname","page","pcity","pinterest","pbio"].forEach((id,i)=>$(id).value=p[["name","age","city","interests","bio"][i]]||"")}
+$("saveProfile").onclick=()=>{let age=Number($("page").value);if(age&&age<18){$("profileStatus").textContent="SUENSY es solo para mayores de 18 años.";return}let p={name:$("pname").value,age:$("page").value,city:$("pcity").value,interests:$("pinterest").value,bio:$("pbio").value};localStorage.setItem("suensy_profile",JSON.stringify(p));$("profileStatus").textContent="Vista previa guardada en este dispositivo."};
+$("register").onclick=()=>{let email=$("email").value.trim(),pw=$("password").value;if(!email||!email.includes("@")||pw.length<8||!$("adult").checked){$("accountStatus").textContent="Revisa el correo, usa 8 caracteres o más y confirma que tienes 18 años o más.";return}localStorage.setItem("suensy_session",JSON.stringify({email}));$("accountTop").textContent=email;$("accountStatus").textContent="Sesión de prueba iniciada en este dispositivo. No se ha creado una cuenta online."};
+$("logout").onclick=()=>{localStorage.removeItem("suensy_session");$("accountTop").textContent="Modo demostración";$("accountStatus").textContent="Sesión local cerrada."};
+let session=JSON.parse(localStorage.getItem("suensy_session")||"null");if(session)$("accountTop").textContent=session.email;
+if("serviceWorker" in navigator && location.protocol.startsWith("http"))navigator.serviceWorker.register("./sw.js").catch(()=>{});
+</script>
+</body></html>

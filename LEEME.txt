@@ -1,0 +1,30 @@
+SUENSY WEB · PROTOTIPO FUNCIONAL LOCAL
+
+Archivos:
+- index.html: aplicación web de demostración
+- manifest.webmanifest: datos para instalación PWA
+- sw.js: caché básica para uso offline tras primera carga en servidor HTTPS
+
+PARA PROBAR:
+1. Descomprime SUENSY_web.zip.
+2. Abre index.html con Chrome, Edge o Safari.
+3. Usa las pestañas: Inicio, Descubrir, Mensajes, Categorías, Mi perfil, Premium y Cuenta.
+
+QUÉ FUNCIONA EN ESTA DEMO:
+- Navegación entre secciones.
+- Filtro local de perfiles ficticios por ciudad e intereses.
+- Botones de like y saludo de demostración.
+- Guardado local de la vista previa del perfil.
+- Flujo de cuenta de prueba con confirmación +18.
+- Datos guardados únicamente en el navegador mediante localStorage.
+
+QUÉ NO ES:
+- No es una plataforma publicada ni un servicio multiusuario.
+- No tiene servidor, base de datos compartida, autenticación segura, chat real,
+  geolocalización, verificación real de edad, moderación ni pagos.
+- No introduzcas contraseñas reales ni información sensible.
+
+PARA PUBLICAR COMO WEB APP INSTALABLE:
+Se necesitará alojamiento HTTPS para que la PWA y el service worker funcionen
+correctamente. Antes de abrirla al público habrá que añadir backend, seguridad,
+privacidad, moderación, procesos de edad +18 y pruebas.

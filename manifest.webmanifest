@@ -1,0 +1,9 @@
+{
+  "name": "SUENSY",
+  "short_name": "SUENSY",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#100d18",
+  "theme_color": "#171126",
+  "description": "Conecta con gente a tu manera. Solo mayores de 18 años."
+}
