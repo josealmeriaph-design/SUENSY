@@ -1,24 +1,17 @@
-SUENSY – versión con perfiles conectados a Supabase
+SUENSY — búsqueda de perfiles conectada a Supabase
 
-Incluye:
-- Registro e inicio de sesión con Supabase Auth.
-- Carga y guardado del perfil del usuario conectado en public.profiles.
-- Campos: nombre visible, edad, ciudad, intereses y descripción.
-- El perfil se guarda con el ID de la cuenta conectada y queda visible (is_visible=true).
+CAMBIO DE ESTA VERSIÓN
+- Descubrir consulta perfiles de public.profiles en Supabase.
+- Solo muestra perfiles con is_visible=true.
+- Excluye la cuenta que ha iniciado sesión.
+- Permite filtrar por ciudad e interés.
+- No muestra perfiles ficticios en la búsqueda online.
 
-Para actualizar:
-1. Descomprime este ZIP.
-2. En GitHub, abre el repositorio SUENSY.
-3. Add file > Upload files.
-4. Sube los cuatro archivos sueltos, sustituyendo los existentes.
-5. Commit directly to main y guarda los cambios.
-6. Vercel debería desplegar automáticamente. Espera a que el deployment esté Ready.
-7. Abre https://suensy.vercel.app y recarga la página. Si ves la versión anterior, prueba una recarga completa o abre una ventana privada.
+IMPORTANTE
+- Esta función depende de las políticas RLS de Supabase ya creadas.
+- Si no hay otros perfiles visibles, aparecerá un mensaje informativo.
+- Los botones de Me gusta, mensajes, pagos y llamadas todavía no están conectados como funciones reales.
+- La verificación de edad y los controles de seguridad/moderación completos siguen pendientes.
 
-Importante:
-- Esto conecta el formulario Mi perfil a la tabla public.profiles existente.
-- Requiere que la tabla tenga columnas id, display_name, age, city, bio, interests e is_visible, y que id sea la clave primaria vinculada a auth.users.
-- La columna interests debe aceptar una lista de texto (text[]). Si la tabla se creó como texto simple, habrá que adaptar el código o la columna.
-- La política RLS debe permitir al usuario insertar/actualizar únicamente su propio registro.
-- Descubrir, chat, pagos, llamadas, fotos y verificación real de edad todavía no están implementados.
-- Los perfiles se guardan como visibles para que puedan aparecer en futuras búsquedas. No introduzcas información sensible.
+PUBLICACIÓN
+Sube los archivos de este ZIP al repositorio GitHub SUENSY, reemplazando los archivos existentes, y espera a que Vercel muestre Ready.

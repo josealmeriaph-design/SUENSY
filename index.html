@@ -39,9 +39,9 @@ button,.btn{font:inherit}.primary,.secondary,.danger{border:0;border-radius:12px
 <div class="notice">Esta versión es una demostración local: los datos se guardan solo en este navegador. No hay usuarios reales ni servidor compartido.</div>
 </section>
 <section id="discover" class="page hidden">
-<div class="row"><div><div class="eyebrow">Personas</div><h2>Descubrir</h2><p class="muted">Encuentra personas por ciudad e intereses.</p></div></div>
+<div class="row"><div><div class="eyebrow">Personas</div><h2>Descubrir</h2><p class="muted">Encuentra personas reales que hayan decidido mostrar su perfil.</p></div></div>
 <div class="card" style="margin:16px 0"><div class="formgrid"><div class="field"><label for="cityFilter">Ciudad</label><input id="cityFilter" placeholder="Ej. Sevilla"></div><div class="field"><label for="interestFilter">Interés</label><select id="interestFilter"><option value="">Todos los intereses</option><option>Amistad</option><option>Conocer gente</option><option>Deporte</option><option>Música</option><option>Viajes</option><option>Salir y ocio</option></select></div></div><button id="searchBtn" class="primary">Buscar</button></div>
-<div id="profiles" class="grid"></div>
+<div id="profiles" class="grid"><div class="card">Inicia sesión y pulsa Buscar para ver otros perfiles.</div></div>
 </section>
 <section id="messages" class="page hidden"><div class="eyebrow">Conversaciones</div><h2>Mensajes</h2><p class="muted">Tus saludos y conexiones de esta demostración.</p><div class="card" id="messageList"></div><div class="notice">El chat entre personas distintas necesita un backend seguro. Aquí puedes probar la interfaz en este dispositivo.</div></section>
 <section id="categories" class="page hidden"><div class="eyebrow">Encuentra tu plan</div><h2>Explora por categorías</h2><p class="muted">Elige qué te apetece encontrar.</p><div class="grid" id="categoryGrid"></div></section>
@@ -67,7 +67,37 @@ let likes=JSON.parse(localStorage.getItem("suensy_likes")||"[]"), greetings=JSON
 function page(name){document.querySelectorAll(".page").forEach(x=>x.classList.add("hidden"));$(name).classList.remove("hidden");document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===name));if(name==="discover")renderProfiles();if(name==="messages")renderMessages();if(name==="profile")loadProfile();window.scrollTo(0,0)}
 document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>page(b.dataset.page));
 document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>page(b.dataset.go));
-function renderProfiles(){let city=$("cityFilter").value.trim().toLowerCase(),interest=$("interestFilter").value;let list=demo.filter(p=>(!city||p.city.toLowerCase().includes(city))&&(!interest||p.tags.includes(interest)));$("profiles").innerHTML=list.length?list.map((p,i)=>`<article class="card profile"><div class="avatar">${p.emoji}</div><div class="profile-body"><h3>${p.name}, ${p.age}</h3><div class="small">${p.city} · ${p.bio}</div><div class="chips">${p.tags.map(t=>`<span class="chip">${t}</span>`).join("")}</div><div class="actions"><button class="primary" onclick="toggleLike('${p.name}')">${likes.includes(p.name)?"♥ Te gusta":"♡ Me gusta"}</button><button class="secondary" onclick="greet('${p.name}')">Saludar</button></div></div></article>`).join(""):'<div class="card">No hay perfiles de ejemplo con esos filtros.</div>'}
+function escapeHTML(value){return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+async function renderProfiles(){
+  const box=$("profiles");
+  const city=$("cityFilter").value.trim();
+  const interest=$("interestFilter").value;
+  box.innerHTML='<div class="card">Buscando perfiles...</div>';
+  const {data:{session}}=await supabaseClient.auth.getSession();
+  if(!session){box.innerHTML='<div class="card">Inicia sesión para descubrir perfiles de SUENSY.</div>';return;}
+  let query=supabaseClient.from("profiles")
+    .select("id,display_name,age,city,bio,interests")
+    .eq("is_visible",true)
+    .neq("id",session.user.id)
+    .order("created_at",{ascending:false})
+    .limit(50);
+  if(city) query=query.ilike("city",`%${city}%`);
+  if(interest) query=query.contains("interests",[interest]);
+  const {data,error}=await query;
+  if(error){
+    console.error("Error al buscar perfiles:",error);
+    box.innerHTML='<div class="card">No se pudieron cargar los perfiles. Comprueba la conexión e inténtalo de nuevo.</div>';
+    return;
+  }
+  if(!data?.length){
+    box.innerHTML='<div class="card">Todavía no hay otros perfiles visibles que coincidan con tu búsqueda. Tu propio perfil no aparece en tus resultados.</div>';
+    return;
+  }
+  box.innerHTML=data.map(p=>{
+    const tags=Array.isArray(p.interests)?p.interests:(p.interests?[String(p.interests)]:[]);
+    return `<article class="card profile"><div class="avatar">💜</div><div class="profile-body"><h3>${escapeHTML(p.display_name)}, ${escapeHTML(p.age)}</h3><div class="small">${escapeHTML(p.city)}</div><p>${escapeHTML(p.bio||"")}</p><div class="chips">${tags.map(t=>`<span class="chip">${escapeHTML(t)}</span>`).join("")}</div></div></article>`;
+  }).join("");
+}
 function toggleLike(n){likes=likes.includes(n)?likes.filter(x=>x!==n):[...likes,n];localStorage.setItem("suensy_likes",JSON.stringify(likes));renderProfiles()}
 function greet(n){if(!greetings.includes(n))greetings.push(n);localStorage.setItem("suensy_greetings",JSON.stringify(greetings));alert("Saludo de demostración preparado para "+n+". No se ha enviado a una persona real.");}
 $("searchBtn").onclick=renderProfiles;
