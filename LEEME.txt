@@ -1,19 +1,24 @@
-SUENSY - versión con registro online conectado a Supabase
+SUENSY – versión con perfiles conectados a Supabase
 
-Archivos:
-- index.html
-- manifest.webmanifest
-- sw.js
-- LEEME.txt
+Incluye:
+- Registro e inicio de sesión con Supabase Auth.
+- Carga y guardado del perfil del usuario conectado en public.profiles.
+- Campos: nombre visible, edad, ciudad, intereses y descripción.
+- El perfil se guarda con el ID de la cuenta conectada y queda visible (is_visible=true).
 
-Esta versión conecta el registro e inicio de sesión con Supabase Auth.
-La clave incluida es la Publishable key (pública), no una Secret key.
-No incluye todavía perfiles compartidos, chat real, pagos, videollamadas ni verificación real de edad.
+Para actualizar:
+1. Descomprime este ZIP.
+2. En GitHub, abre el repositorio SUENSY.
+3. Add file > Upload files.
+4. Sube los cuatro archivos sueltos, sustituyendo los existentes.
+5. Commit directly to main y guarda los cambios.
+6. Vercel debería desplegar automáticamente. Espera a que el deployment esté Ready.
+7. Abre https://suensy.vercel.app y recarga la página. Si ves la versión anterior, prueba una recarga completa o abre una ventana privada.
 
-Para desplegar:
-1. Sustituye los archivos del repositorio GitHub por estos.
-2. Haz Commit changes en main.
-3. Vercel detectará el nuevo commit y publicará una nueva versión.
-4. En Supabase, revisa Authentication > URL Configuration y configura Site URL con el dominio real de Vercel, además de Redirect URLs.
-
-La confirmación de correo puede estar activada; el usuario tendrá que confirmar su email antes de iniciar sesión.
+Importante:
+- Esto conecta el formulario Mi perfil a la tabla public.profiles existente.
+- Requiere que la tabla tenga columnas id, display_name, age, city, bio, interests e is_visible, y que id sea la clave primaria vinculada a auth.users.
+- La columna interests debe aceptar una lista de texto (text[]). Si la tabla se creó como texto simple, habrá que adaptar el código o la columna.
+- La política RLS debe permitir al usuario insertar/actualizar únicamente su propio registro.
+- Descubrir, chat, pagos, llamadas, fotos y verificación real de edad todavía no están implementados.
+- Los perfiles se guardan como visibles para que puedan aparecer en futuras búsquedas. No introduzcas información sensible.

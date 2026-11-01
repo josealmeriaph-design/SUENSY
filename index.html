@@ -45,7 +45,7 @@ button,.btn{font:inherit}.primary,.secondary,.danger{border:0;border-radius:12px
 </section>
 <section id="messages" class="page hidden"><div class="eyebrow">Conversaciones</div><h2>Mensajes</h2><p class="muted">Tus saludos y conexiones de esta demostración.</p><div class="card" id="messageList"></div><div class="notice">El chat entre personas distintas necesita un backend seguro. Aquí puedes probar la interfaz en este dispositivo.</div></section>
 <section id="categories" class="page hidden"><div class="eyebrow">Encuentra tu plan</div><h2>Explora por categorías</h2><p class="muted">Elige qué te apetece encontrar.</p><div class="grid" id="categoryGrid"></div></section>
-<section id="profile" class="page hidden"><div class="eyebrow">Tu espacio</div><h2>Mi perfil</h2><p class="muted">Completa la información que quieres compartir.</p><div class="card"><div class="formgrid"><div class="field"><label for="pname">Nombre visible</label><input id="pname" maxlength="30" placeholder="Cómo quieres que te llamen"></div><div class="field"><label for="page">Edad (18 o más)</label><input id="page" type="number" min="18" max="99" placeholder="18"></div><div class="field"><label for="pcity">Ciudad</label><input id="pcity" maxlength="50" placeholder="Tu ciudad"></div><div class="field"><label for="pinterest">Intereses</label><input id="pinterest" maxlength="100" placeholder="Música, deporte, viajes..."></div></div><div class="field"><label for="pbio">Descripción</label><textarea id="pbio" maxlength="350" placeholder="Cuéntales algo sobre ti..."></textarea></div><button id="saveProfile" class="primary">Guardar perfil en este dispositivo</button><p id="profileStatus" class="small"></p></div><div class="notice">No subas información sensible. Esta demo no tiene almacenamiento seguro en la nube ni permite que otras personas vean tu perfil.</div></section>
+<section id="profile" class="page hidden"><div class="eyebrow">Tu espacio</div><h2>Mi perfil</h2><p class="muted">Completa la información que quieres compartir.</p><div class="card"><div class="formgrid"><div class="field"><label for="pname">Nombre visible</label><input id="pname" maxlength="30" placeholder="Cómo quieres que te llamen"></div><div class="field"><label for="page">Edad (18 o más)</label><input id="page" type="number" min="18" max="99" placeholder="18"></div><div class="field"><label for="pcity">Ciudad</label><input id="pcity" maxlength="50" placeholder="Tu ciudad"></div><div class="field"><label for="pinterest">Intereses</label><input id="pinterest" maxlength="100" placeholder="Música, deporte, viajes..."></div></div><div class="field"><label for="pbio">Descripción</label><textarea id="pbio" maxlength="350" placeholder="Cuéntales algo sobre ti..."></textarea></div><button id="saveProfile" class="primary">Guardar mi perfil online</button><p id="profileStatus" class="small"></p></div><div class="notice">Tu perfil se guarda en Supabase y puede mostrarse a otros usuarios de SUENSY si está visible. No incluyas datos sensibles. La verificación de edad todavía no está implementada.</div></section>
 <section id="premium" class="page hidden"><div class="hero"><div class="eyebrow">Más opciones</div><h1>SUENSY Premium</h1><h2>1 € / mes</h2><p class="sub">Precio propuesto para funciones adicionales. Esta demo no procesa pagos.</p></div><div class="card"><h3>Funciones prémium previstas</h3><ul class="muted"><li>Filtros avanzados</li><li>Ver quién te ha dado like</li><li>Destacar perfil</li><li>Más opciones de personalización</li></ul><div class="notice">El cobro real se añadirá después de configurar proveedor de pagos, condiciones legales y cuenta de comercio.</div></div></section>
 <section id="account" class="page hidden"><div class="eyebrow">Acceso</div><h2>Tu cuenta SUENSY</h2><p class="muted">Crea una cuenta online con Supabase o inicia sesión si ya tienes una.</p><div class="card"><div class="field"><label for="email">Correo electrónico</label><input id="email" type="email" autocomplete="email" placeholder="tu@correo.com"></div><div class="field"><label for="password">Contraseña</label><input id="password" type="password" autocomplete="new-password" minlength="8" placeholder="Mínimo 8 caracteres"></div><div class="field"><label style="display:flex;gap:9px;align-items:flex-start"><input id="adult" type="checkbox" style="width:auto;margin-top:4px"> Confirmo que tengo 18 años o más y acepto las normas de la comunidad.</label></div><div class="actions"><button id="register" class="primary">Crear cuenta</button><button id="logout" class="secondary">Cerrar sesión local</button></div><p id="accountStatus" class="small"></p></div><div class="notice">Para producción: verificación de edad adecuada, autenticación segura, recuperación de cuenta, protección de datos y moderación. La casilla por sí sola no verifica la edad.</div></section>
 </main>
@@ -74,8 +74,42 @@ $("searchBtn").onclick=renderProfiles;
 function renderMessages(){$("messageList").innerHTML=greetings.length?greetings.map(n=>`<div class="chatline"><b>${n}</b><div class="muted">Has preparado un saludo de demostración.</div><span class="small">Sin conversación real</span></div>`).join(""):'<p class="muted">Todavía no has saludado a ningún perfil de ejemplo. Ve a Descubrir para probarlo.</p>'}
 $("categoryGrid").innerHTML=cats.map(c=>`<button class="card category secondary" onclick="categorySearch('${c[1]}')"><span class="emoji">${c[0]}</span><b>${c[1]}</b><span class="small">${c[2]}</span></button>`).join("");
 function categorySearch(c){page("discover");$("interestFilter").value= c==="Ligar"?"Conocer gente":c;renderProfiles()}
-function loadProfile(){let p=JSON.parse(localStorage.getItem("suensy_profile")||"{}");["pname","page","pcity","pinterest","pbio"].forEach((id,i)=>$(id).value=p[["name","age","city","interests","bio"][i]]||"")}
-$("saveProfile").onclick=()=>{let age=Number($("page").value);if(age&&age<18){$("profileStatus").textContent="SUENSY es solo para mayores de 18 años.";return}let p={name:$("pname").value,age:$("page").value,city:$("pcity").value,interests:$("pinterest").value,bio:$("pbio").value};localStorage.setItem("suensy_profile",JSON.stringify(p));$("profileStatus").textContent="Vista previa guardada en este dispositivo."};
+async function loadProfile(){
+  $("profileStatus").textContent="Cargando tu perfil...";
+  const {data:{session}}=await supabaseClient.auth.getSession();
+  if(!session){$("profileStatus").textContent="Inicia sesión para guardar tu perfil online.";return;}
+  const {data,error}=await supabaseClient.from("profiles").select("display_name,age,city,bio,interests").eq("id",session.user.id).maybeSingle();
+  if(error){$("profileStatus").textContent="No se pudo cargar el perfil: "+error.message;return;}
+  if(data){
+    $("pname").value=data.display_name||"";
+    $("page").value=data.age||"";
+    $("pcity").value=data.city||"";
+    $("pinterest").value=Array.isArray(data.interests)?data.interests.join(", "):(data.interests||"");
+    $("pbio").value=data.bio||"";
+    $("profileStatus").textContent="Tu perfil online está cargado.";
+  }else{
+    $("profileStatus").textContent="Todavía no tienes perfil. Completa los campos y pulsa Guardar mi perfil online.";
+  }
+}
+$("saveProfile").onclick=async()=>{
+  const {data:{session}}=await supabaseClient.auth.getSession();
+  if(!session){$("profileStatus").textContent="Primero inicia sesión en Cuenta.";return;}
+  const age=Number($("page").value);
+  if(!$("pname").value.trim()||!age||age<18||age>99||!$("pcity").value.trim()){
+    $("profileStatus").textContent="Completa nombre, edad (18 o más) y ciudad.";return;
+  }
+  const interests=$("pinterest").value.split(",").map(x=>x.trim()).filter(Boolean);
+  const profile={id:session.user.id,display_name:$("pname").value.trim(),age,city:$("pcity").value.trim(),interests,bio:$("pbio").value.trim(),is_visible:true};
+  $("saveProfile").disabled=true;
+  $("profileStatus").textContent="Guardando tu perfil online...";
+  try{
+    const {error}=await supabaseClient.from("profiles").upsert(profile,{onConflict:"id"});
+    if(error) throw error;
+    $("profileStatus").textContent="¡Perfil guardado en SUENSY! Ya está almacenado en la base de datos.";
+  }catch(e){
+    $("profileStatus").textContent="No se pudo guardar el perfil: "+e.message;
+  }finally{$("saveProfile").disabled=false;}
+};
 async function createOrLoginAccount(){
   const email=$("email").value.trim(), pw=$("password").value;
   if(!email || !email.includes("@") || pw.length<8 || !$("adult").checked){
