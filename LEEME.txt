@@ -1,17 +1,9 @@
-SUENSY — búsqueda de perfiles conectada a Supabase
+SUENSY - actualización de ubicación y presencia online
 
-CAMBIO DE ESTA VERSIÓN
-- Descubrir consulta perfiles de public.profiles en Supabase.
-- Solo muestra perfiles con is_visible=true.
-- Excluye la cuenta que ha iniciado sesión.
-- Permite filtrar por ciudad e interés.
-- No muestra perfiles ficticios en la búsqueda online.
+1) Antes de subir los archivos, abre SUPABASE_actualizacion.sql y ejecuta TODO su contenido en Supabase > SQL Editor > New query > Run.
+2) Sube index.html, manifest.webmanifest y sw.js a la raíz del repositorio GitHub. No es necesario subir este LEEME ni el SQL.
+3) Tras el despliegue, inicia sesión y entra en Descubrir. Activa Mostrar que estoy online y, si quieres, Compartir mi ubicación aproximada y pulsa Activar ubicación.
 
-IMPORTANTE
-- Esta función depende de las políticas RLS de Supabase ya creadas.
-- Si no hay otros perfiles visibles, aparecerá un mensaje informativo.
-- Los botones de Me gusta, mensajes, pagos y llamadas todavía no están conectados como funciones reales.
-- La verificación de edad y los controles de seguridad/moderación completos siguen pendientes.
+La ubicación exacta se guarda en una tabla separada con acceso RLS solo al propio usuario. La función SQL devuelve solo kilómetros redondeados, nunca coordenadas. El estado online se calcula con una última actividad de menos de 2 minutos. La geolocalización requiere HTTPS y permiso del navegador.
 
-PUBLICACIÓN
-Sube los archivos de este ZIP al repositorio GitHub SUENSY, reemplazando los archivos existentes, y espera a que Vercel muestre Ready.
+IMPORTANTE: esta versión necesita ejecutar el SQL antes de publicarse. Si no se ejecuta, la búsqueda mostrará un error.

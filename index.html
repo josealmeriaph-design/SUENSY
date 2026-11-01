@@ -19,7 +19,7 @@ h1{font-size:clamp(30px,6vw,48px);line-height:1.08;margin:8px 0 12px}.sub{color:
 h2{margin:0 0 8px;font-size:25px}h3{margin:0 0 5px}.muted{color:var(--muted)}.small{font-size:13px;color:var(--muted)}
 .card{background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:18px;padding:18px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
-.profile{overflow:hidden;padding:0}.avatar{height:125px;display:grid;place-items:center;font-size:58px;background:linear-gradient(135deg,#48305c,#24213d)}.profile-body{padding:16px}.chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}.chip{font-size:12px;border-radius:20px;padding:4px 9px;background:#382b4b;color:#e5d9ff}
+.profile{overflow:hidden;padding:0}.avatar{height:125px;display:grid;place-items:center;font-size:58px;background:linear-gradient(135deg,#48305c,#24213d)}.profile-body{padding:16px}.presence{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);margin:5px 0}.dot{width:9px;height:9px;border-radius:50%;background:#77808b;display:inline-block}.dot.online{background:#45df91;box-shadow:0 0 8px #45df91aa}.privacy-controls{display:flex;gap:14px;flex-wrap:wrap;margin:12px 0}.privacy-controls label{display:flex;align-items:center;gap:8px;font-size:13px;color:#e5d9ff}.privacy-controls input{width:auto}.chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}.chip{font-size:12px;border-radius:20px;padding:4px 9px;background:#382b4b;color:#e5d9ff}
 button,.btn{font:inherit}.primary,.secondary,.danger{border:0;border-radius:12px;padding:11px 15px;font-weight:750;cursor:pointer}.primary{background:linear-gradient(100deg,var(--pink),var(--violet));color:white}.secondary{background:#342944;color:white;border:1px solid #59476e}.danger{background:#512738;color:#ffdce8}.primary:hover,.secondary:hover{filter:brightness(1.12)}
 .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.field{display:grid;gap:6px;margin:12px 0}.field label{font-size:13px;color:#d9cfe7;font-weight:700}input,textarea,select{width:100%;padding:12px;border:1px solid #554765;border-radius:11px;background:#130f1c;color:white;font:inherit}input:focus,textarea:focus,select:focus{outline:2px solid #a77dff;border-color:transparent}textarea{min-height:90px;resize:vertical}
 .formgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}.notice{padding:12px 14px;border-radius:12px;background:#2b2238;border:1px solid #55436b;color:#d8cce8;font-size:13px;margin:14px 0}.notice.good{border-color:#39795e;background:#1d352e;color:#c5f5df}
@@ -40,7 +40,7 @@ button,.btn{font:inherit}.primary,.secondary,.danger{border:0;border-radius:12px
 </section>
 <section id="discover" class="page hidden">
 <div class="row"><div><div class="eyebrow">Personas</div><h2>Descubrir</h2><p class="muted">Encuentra personas reales que hayan decidido mostrar su perfil.</p></div></div>
-<div class="card" style="margin:16px 0"><div class="formgrid"><div class="field"><label for="cityFilter">Ciudad</label><input id="cityFilter" placeholder="Ej. Sevilla"></div><div class="field"><label for="interestFilter">Interés</label><select id="interestFilter"><option value="">Todos los intereses</option><option>Amistad</option><option>Conocer gente</option><option>Deporte</option><option>Música</option><option>Viajes</option><option>Salir y ocio</option></select></div></div><button id="searchBtn" class="primary">Buscar</button></div>
+<div class="card" style="margin:16px 0"><div class="formgrid"><div class="field"><label for="cityFilter">Ciudad</label><input id="cityFilter" placeholder="Ej. Sevilla"></div><div class="field"><label for="interestFilter">Interés</label><select id="interestFilter"><option value="">Todos los intereses</option><option>Amistad</option><option>Conocer gente</option><option>Deporte</option><option>Música</option><option>Viajes</option><option>Salir y ocio</option></select></div></div><div class="privacy-controls"><label><input type="checkbox" id="shareLocation"> Compartir mi ubicación aproximada</label><label><input type="checkbox" id="showOnline" checked> Mostrar que estoy online</label></div><p class="small">La ubicación solo se usa para calcular kilómetros aproximados. Nunca mostramos tus coordenadas ni tu dirección.</p><div class="actions"><button id="locationBtn" class="secondary">Activar ubicación</button><button id="searchBtn" class="primary">Buscar</button></div><p id="presenceStatus" class="small" aria-live="polite"></p></div>
 <div id="profiles" class="grid"><div class="card">Inicia sesión y pulsa Buscar para ver otros perfiles.</div></div>
 </section>
 <section id="messages" class="page hidden"><div class="eyebrow">Conversaciones</div><h2>Mensajes</h2><p class="muted">Tus saludos y conexiones de esta demostración.</p><div class="card" id="messageList"></div><div class="notice">El chat entre personas distintas necesita un backend seguro. Aquí puedes probar la interfaz en este dispositivo.</div></section>
@@ -68,6 +68,31 @@ function page(name){document.querySelectorAll(".page").forEach(x=>x.classList.ad
 document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>page(b.dataset.page));
 document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>page(b.dataset.go));
 function escapeHTML(value){return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+let presenceHeartbeat=null;
+let currentCoords=null;
+async function savePresence(){
+  const {data:{session}}=await supabaseClient.auth.getSession();
+  if(!session)return;
+  const payload={user_id:session.user.id,show_online:$("showOnline").checked,share_location:$("shareLocation").checked,last_seen_at:new Date().toISOString()};
+  if(currentCoords && $("shareLocation").checked){payload.latitude=currentCoords.latitude;payload.longitude=currentCoords.longitude;}
+  const {error}=await supabaseClient.from("profile_presence").upsert(payload,{onConflict:"user_id"});
+  if(error){$("presenceStatus").textContent="No se pudo guardar tu privacidad: "+error.message;return;}
+  $("presenceStatus").textContent=$("shareLocation").checked?"Ubicación compartida para calcular distancias aproximadas.":"No compartes tu ubicación.";
+}
+async function activateLocation(){
+  if(!navigator.geolocation){$("presenceStatus").textContent="Este navegador no permite geolocalización.";return;}
+  $("locationBtn").disabled=true;$("presenceStatus").textContent="Esperando permiso de ubicación...";
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    currentCoords={latitude:pos.coords.latitude,longitude:pos.coords.longitude};
+    $("shareLocation").checked=true;
+    await savePresence();
+    $("locationBtn").disabled=false;
+    await renderProfiles();
+  },err=>{
+    $("locationBtn").disabled=false;
+    $("presenceStatus").textContent=err.code===1?"No has permitido la ubicación. Puedes seguir usando SUENSY sin compartirla.":"No se pudo obtener la ubicación. Comprueba los permisos del navegador.";
+  },{enableHighAccuracy:false,timeout:12000,maximumAge:300000});
+}
 async function renderProfiles(){
   const box=$("profiles");
   const city=$("cityFilter").value.trim();
@@ -75,29 +100,29 @@ async function renderProfiles(){
   box.innerHTML='<div class="card">Buscando perfiles...</div>';
   const {data:{session}}=await supabaseClient.auth.getSession();
   if(!session){box.innerHTML='<div class="card">Inicia sesión para descubrir perfiles de SUENSY.</div>';return;}
-  let query=supabaseClient.from("profiles")
-    .select("id,display_name,age,city,bio,interests")
-    .eq("is_visible",true)
-    .neq("id",session.user.id)
-    .order("created_at",{ascending:false})
-    .limit(50);
-  if(city) query=query.ilike("city",`%${city}%`);
-  if(interest) query=query.contains("interests",[interest]);
-  const {data,error}=await query;
+  await savePresence();
+  const {data,error}=await supabaseClient.rpc("discover_profiles_with_presence");
   if(error){
     console.error("Error al buscar perfiles:",error);
-    box.innerHTML='<div class="card">No se pudieron cargar los perfiles. Comprueba la conexión e inténtalo de nuevo.</div>';
+    box.innerHTML='<div class="card">No se pudieron cargar los perfiles. Primero hay que aplicar la actualización de privacidad en Supabase. Detalle: '+escapeHTML(error.message)+'</div>';
     return;
   }
-  if(!data?.length){
-    box.innerHTML='<div class="card">Todavía no hay otros perfiles visibles que coincidan con tu búsqueda. Tu propio perfil no aparece en tus resultados.</div>';
-    return;
-  }
-  box.innerHTML=data.map(p=>{
+  let results=(data||[]).filter(p=>!city||String(p.city||"").toLowerCase().includes(city.toLowerCase()));
+  if(interest)results=results.filter(p=>Array.isArray(p.interests)?p.interests.includes(interest):String(p.interests||"").includes(interest));
+  if(!results.length){box.innerHTML='<div class="card">Todavía no hay otros perfiles visibles que coincidan con tu búsqueda. Tu propio perfil no aparece en tus resultados.</div>';return;}
+  box.innerHTML=results.map(p=>{
     const tags=Array.isArray(p.interests)?p.interests:(p.interests?[String(p.interests)]:[]);
-    return `<article class="card profile"><div class="avatar">💜</div><div class="profile-body"><h3>${escapeHTML(p.display_name)}, ${escapeHTML(p.age)}</h3><div class="small">${escapeHTML(p.city)}</div><p>${escapeHTML(p.bio||"")}</p><div class="chips">${tags.map(t=>`<span class="chip">${escapeHTML(t)}</span>`).join("")}</div></div></article>`;
+    const online=!!p.is_online;
+    const distance=p.distance_km===null||p.distance_km===undefined?"":" · A unos "+escapeHTML(p.distance_km)+" km de ti";
+    return `<article class="card profile"><div class="avatar">💜</div><div class="profile-body"><h3>${escapeHTML(p.display_name)}, ${escapeHTML(p.age)}</h3><div class="small">${escapeHTML(p.city||"")}${distance}</div><div class="presence"><span class="dot ${online?'online':''}"></span>${online?'Online':'Desconectado'}</div><p>${escapeHTML(p.bio||"")}</p><div class="chips">${tags.map(t=>`<span class="chip">${escapeHTML(t)}</span>`).join("")}</div></div></article>`;
   }).join("");
 }
+$("locationBtn").onclick=activateLocation;
+$("shareLocation").onchange=async()=>{if(!$("shareLocation").checked){currentCoords=null;await supabaseClient.from("profile_presence").update({share_location:false,latitude:null,longitude:null}).eq("user_id",(await supabaseClient.auth.getUser()).data.user.id);$("presenceStatus").textContent="Has dejado de compartir tu ubicación.";}else if(currentCoords){await savePresence();}else{await activateLocation();}};
+$("showOnline").onchange=savePresence;
+if(presenceHeartbeat)clearInterval(presenceHeartbeat);
+presenceHeartbeat=setInterval(async()=>{const {data:{session}}=await supabaseClient.auth.getSession();if(session)await savePresence();},45000);
+
 function toggleLike(n){likes=likes.includes(n)?likes.filter(x=>x!==n):[...likes,n];localStorage.setItem("suensy_likes",JSON.stringify(likes));renderProfiles()}
 function greet(n){if(!greetings.includes(n))greetings.push(n);localStorage.setItem("suensy_greetings",JSON.stringify(greetings));alert("Saludo de demostración preparado para "+n+". No se ha enviado a una persona real.");}
 $("searchBtn").onclick=renderProfiles;
