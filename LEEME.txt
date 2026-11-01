@@ -1,30 +1,19 @@
-SUENSY WEB · PROTOTIPO FUNCIONAL LOCAL
+SUENSY - versión con registro online conectado a Supabase
 
 Archivos:
-- index.html: aplicación web de demostración
-- manifest.webmanifest: datos para instalación PWA
-- sw.js: caché básica para uso offline tras primera carga en servidor HTTPS
+- index.html
+- manifest.webmanifest
+- sw.js
+- LEEME.txt
 
-PARA PROBAR:
-1. Descomprime SUENSY_web.zip.
-2. Abre index.html con Chrome, Edge o Safari.
-3. Usa las pestañas: Inicio, Descubrir, Mensajes, Categorías, Mi perfil, Premium y Cuenta.
+Esta versión conecta el registro e inicio de sesión con Supabase Auth.
+La clave incluida es la Publishable key (pública), no una Secret key.
+No incluye todavía perfiles compartidos, chat real, pagos, videollamadas ni verificación real de edad.
 
-QUÉ FUNCIONA EN ESTA DEMO:
-- Navegación entre secciones.
-- Filtro local de perfiles ficticios por ciudad e intereses.
-- Botones de like y saludo de demostración.
-- Guardado local de la vista previa del perfil.
-- Flujo de cuenta de prueba con confirmación +18.
-- Datos guardados únicamente en el navegador mediante localStorage.
+Para desplegar:
+1. Sustituye los archivos del repositorio GitHub por estos.
+2. Haz Commit changes en main.
+3. Vercel detectará el nuevo commit y publicará una nueva versión.
+4. En Supabase, revisa Authentication > URL Configuration y configura Site URL con el dominio real de Vercel, además de Redirect URLs.
 
-QUÉ NO ES:
-- No es una plataforma publicada ni un servicio multiusuario.
-- No tiene servidor, base de datos compartida, autenticación segura, chat real,
-  geolocalización, verificación real de edad, moderación ni pagos.
-- No introduzcas contraseñas reales ni información sensible.
-
-PARA PUBLICAR COMO WEB APP INSTALABLE:
-Se necesitará alojamiento HTTPS para que la PWA y el service worker funcionen
-correctamente. Antes de abrirla al público habrá que añadir backend, seguridad,
-privacidad, moderación, procesos de edad +18 y pruebas.
+La confirmación de correo puede estar activada; el usuario tendrá que confirmar su email antes de iniciar sesión.
